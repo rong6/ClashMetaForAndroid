@@ -2,3 +2,8 @@
 
 *.bat text eol=crlf
 *.jar binary
+
+# Fork 自定义文件 - 合并时保持本地版本
+app/src/main/res/** merge=ours
+app/src/main/ic_launcher-playstore.png merge=ours
+app/src/main/ic_launcher-web.png merge=ours

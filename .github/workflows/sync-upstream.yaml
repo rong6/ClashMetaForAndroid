@@ -1,0 +1,78 @@
+name: Sync from Upstream
+
+on:
+  schedule:
+    # 每周日 UTC 时间 00:00 自动运行（北京时间早上 8 点）
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Git Config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add Upstream Remote
+        run: |
+          git remote add upstream https://github.com/MetaCubeX/ClashMetaForAndroid.git || true
+          git fetch upstream
+
+      - name: Merge Upstream Changes
+        run: |
+          # 尝试合并上游的 main 分支
+          git merge upstream/main --no-edit --allow-unrelated-histories || true
+
+      - name: Restore Custom Files
+        run: |
+          # 恢复自定义的启动图标
+          git checkout HEAD -- app/src/main/ic_launcher-playstore.png || true
+          git checkout HEAD -- app/src/main/ic_launcher-web.png || true
+          
+          # 恢复 app/src/main/res 目录下的所有文件
+          git checkout HEAD -- app/src/main/res/ || true
+
+      - name: Check for Changes
+        id: check_changes
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes to commit"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+          fi
+
+      - name: Commit and Push
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git add -A
+          git commit -m "Sync from upstream (保留自定义资源文件)" || true
+          git push origin main
+
+      - name: Create Pull Request on Conflict
+        if: failure()
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Sync from upstream (有冲突需要手动解决)
+          branch: sync-upstream-conflict
+          delete-branch: true
+          title: '🔄 上游同步（存在冲突）'
+          body: |
+            自动从上游同步时发生冲突，请手动检查并解决。
+            
+            已保护的文件：
+            - `app/src/main/res/` 目录下的所有文件
+            - `app/src/main/ic_launcher-playstore.png`
+            - `app/src/main/ic_launcher-web.png`
+          labels: sync
