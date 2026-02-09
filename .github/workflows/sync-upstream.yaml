@@ -43,6 +43,9 @@ jobs:
           
           # 恢复 .github 目录（保护自定义的 workflows）
           git checkout HEAD -- .github/ || true
+          
+          # 恢复 build.gradle.kts 的签名配置修改
+          git checkout HEAD -- build.gradle.kts || true
 
       - name: Check for Changes
         id: check_changes
