@@ -144,6 +144,71 @@ jobs:
             app/build/outputs/apk/meta/release/*-x86_64-*.apk
           if-no-files-found: warn
 
+      # 发布到 GitHub Releases（仅当推送到 main 分支时）
+      - name: Delete Old Pre-release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: dev-drprasad/delete-tag-and-release@v1.1
+        with:
+          tag_name: Prerelease-Fork
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          delete_release: true
+        continue-on-error: true
+
+      - name: Create Pre-release Tag
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: Prerelease-Fork
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: Prerelease-Fork
+          name: Fork 自动构建版本 v${{ steps.version.outputs.version }}
+          body: |
+            ## 🚀 Fork 自动构建版本
+            
+            **版本**: v${{ steps.version.outputs.version }}  
+            **构建时间**: ${{ steps.version.outputs.timestamp }}  
+            **构建类型**: Alpha (基于上游最新代码)
+            
+            ### 📦 下载说明
+            
+            选择适合你设备的架构：
+            
+            - **arm64-v8a** ⭐ - 推荐！适合大部分现代 Android 手机（2016年后）
+            - **armeabi-v7a** - 32位 ARM 设备、老旧手机
+            - **universal** - 通用版本，兼容所有设备，但体积较大
+            - **x86_64** - 模拟器、x86 平板电脑
+            
+            **不确定选哪个？** → 下载 **arm64-v8a** 版本
+            
+            ### 🔄 自动同步
+            
+            此版本每天自动从上游同步最新代码并构建，包含：
+            - ✅ 上游最新功能和修复
+            - ✅ 自定义应用图标和资源
+            - ✅ 自动化构建和发布
+            
+            ### ⚠️ 注意事项
+            
+            - 未签名版本需要在手机设置中允许"安装未知来源应用"
+            - 基于上游开发分支，可能不如正式版稳定
+            - 如需稳定版本，请等待上游发布正式版后再下载
+            
+            ---
+            
+            **上游项目**: [MetaCubeX/ClashMetaForAndroid](https://github.com/MetaCubeX/ClashMetaForAndroid)  
+            **构建状态**: [![Build](https://github.com/${{ github.repository }}/actions/workflows/build-fork.yaml/badge.svg)](https://github.com/${{ github.repository }}/actions/workflows/build-fork.yaml)
+          files: |
+            app/build/outputs/apk/alpha/release/*.apk
+            app/build/outputs/apk/meta/release/*.apk
+          prerelease: true
+          generate_release_notes: true
+
       - name: Build Summary
         run: |
           echo "## 构建完成 ✅" >> $GITHUB_STEP_SUMMARY
