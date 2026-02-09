@@ -2,10 +2,10 @@
 
 > [!NOTE]  
 > **这个版本做了什么？**  
-人们总是怀念过去，我也一样。这个版本将图标修改为了原版的Clash Meta For Android，只为让你重新触摸那些熟悉的温度——经典从未走远，只是换了一种方式，与你重逢。
+人们总是怀念过去，我也一样。这个版本将图标修改为了原版的Clash For Android，只为让你重新触摸那些熟悉的温度——经典从未走远，只是换了一种方式，与你重逢。
 > 
 > **What's new in this version?**  
-People often look back fondly on the past, and I'm no exception. This version restores the original Clash Meta For Android icons, allowing you to reconnect with that familiar warmth—the classic never truly left; it simply found a new way to reunite with you.
+People often look back fondly on the past, and I'm no exception. This version restores the original Clash For Android icons, allowing you to reconnect with that familiar warmth—the classic never truly left; it simply found a new way to reunite with you.
 
 A Graphical user interface of [Clash.Meta](https://github.com/MetaCubeX/Clash.Meta) for Android
 
