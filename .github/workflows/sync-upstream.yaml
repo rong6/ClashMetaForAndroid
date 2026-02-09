@@ -40,6 +40,9 @@ jobs:
           
           # 恢复 app/src/main/res 目录下的所有文件
           git checkout HEAD -- app/src/main/res/ || true
+          
+          # 恢复 .github 目录（保护自定义的 workflows）
+          git checkout HEAD -- .github/ || true
 
       - name: Check for Changes
         id: check_changes

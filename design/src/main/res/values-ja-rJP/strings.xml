@@ -164,6 +164,7 @@
     <string name="document">ドキュメント</string>
     <string name="feedback">フィードバック</string>
     <string name="sources">ソース</string>
+    <string name="fork_info">Clash Meta For Android Revise (by Rong6)</string>
     <string name="donate">寄付</string>
     <string name="clash_wiki">Clash Wiki</string>
     <string name="github_issues">Github Issues</string>

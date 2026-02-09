@@ -68,7 +68,7 @@ jobs:
           cp -f /etc/ssl/certs/ca-certificates.crt core/src/foss/golang/clash/component/ca/ca-certificates.crt
 
       - name: Decode Keystore
-        if: inputs.build-type == 'release'
+        if: inputs.build-type == 'release' || github.event_name == 'push'
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
@@ -80,7 +80,7 @@ jobs:
           fi
       
       - name: Create Signing Properties
-        if: inputs.build-type == 'release'
+        if: inputs.build-type == 'release' || github.event_name == 'push'
         env:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
@@ -97,11 +97,11 @@ jobs:
           fi
 
       - name: Build Debug APK
-        if: inputs.build-type == 'debug' || github.event_name == 'push'
+        if: inputs.build-type == 'debug'
         run: ./gradlew --no-daemon app:assembleAlphaRelease
 
       - name: Build Release APK
-        if: inputs.build-type == 'release'
+        if: inputs.build-type == 'release' || github.event_name == 'push'
         run: ./gradlew --no-daemon app:assembleMetaRelease
 
       - name: Get Version Info
@@ -181,7 +181,7 @@ jobs:
             
             **版本**: v${{ steps.version.outputs.version }}  
             **构建时间**: ${{ steps.version.outputs.timestamp }}  
-            **构建类型**: Alpha (基于上游最新代码)
+            **构建类型**: Release (已签名，基于上游最新代码)
             
             ### 📦 下载说明
             
@@ -203,9 +203,8 @@ jobs:
             
             ### ⚠️ 注意事项
             
-            - 未签名版本需要在手机设置中允许"安装未知来源应用"
-            - 基于上游开发分支，可能不如正式版稳定
-            - 如需稳定版本，请等待上游发布正式版后再下载
+            - 签名与官方版本不同，无法直接覆盖安装，请卸载旧版后再安装此版本。
+            - 基于上游最新代码自动构建
             
             ---
             

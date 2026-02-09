@@ -216,6 +216,8 @@
     <string name="document">Document</string>
     <string name="feedback">Feedback</string>
     <string name="sources">Sources</string>
+    <string name="fork_info">Clash Meta For Android Revise (by Rong6)</string>
+    <string name="fork_url" translatable="false">https://github.com/rong6/ClashMetaForAndroid</string>
     <string name="donate">Donate</string>
     <string name="clash_wiki">Clash Wiki</string>
     <string name="github_issues">Github Issues</string>
