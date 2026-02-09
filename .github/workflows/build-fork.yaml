@@ -26,7 +26,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           submodules: recursive
+      
+      - name: Checkout Submodules
+        run: |
+          git submodule update --init --recursive --force
+          cd core/src/foss/golang/clash
+          git fetch --unshallow || true
+          cd -
       
       - name: Setup Java
         uses: actions/setup-java@v4
